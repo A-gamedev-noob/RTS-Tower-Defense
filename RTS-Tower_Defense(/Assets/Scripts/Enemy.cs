@@ -25,5 +25,6 @@ public class Enemy : MonoBehaviour
             yield return new WaitForSeconds(_travelSpeed);
         }
     }
+    
 
 }

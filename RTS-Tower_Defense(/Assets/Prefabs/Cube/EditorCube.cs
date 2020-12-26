@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
+[SelectionBase]
 public class EditorCube : MonoBehaviour
 {
     [SerializeField] bool _snap = true;
@@ -27,15 +28,15 @@ public class EditorCube : MonoBehaviour
     {
         int GridSize = block.GetGridSize();
         Vector2 GridPos = block.GetGridPose();
-        string LocTxt = GridPos.x / GridSize + "," + GridPos.y / GridSize; ;
+        string LocTxt = GridPos.x + "," + GridPos.y ; ;
         _txtMesh.text = LocTxt;
-        transform.name = "Cube (" + GridPos.x / GridSize + "," + GridPos.y / GridSize + ")";
+        transform.name = "Cube (" + GridPos.x + "," + GridPos.y + ")";
     }
 
     private void SnapToGrid()
     {
         int GridSize = block.GetGridSize();
         Vector2 GridPos = block.GetGridPose(); 
-        transform.position = new Vector3(GridPos.x, 0f,GridPos.y);
+        transform.position = new Vector3(GridPos.x * GridSize, 0f,GridPos.y * GridSize);
     }
 }

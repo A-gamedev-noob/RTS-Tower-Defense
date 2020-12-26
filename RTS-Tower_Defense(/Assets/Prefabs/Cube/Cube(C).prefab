@@ -241,7 +241,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d36b5b09d82176248a84b3013506edf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridSize: 10
   _snap: 1
   _txtMesh: {fileID: 1648405643}
 --- !u!114 &867930667354127160
