@@ -6,9 +6,12 @@ public class PathFinder : MonoBehaviour
 {
     
     [SerializeField] Block _startPoint,_endPoint;
-    Dictionary<Vector2Int,Block> _grid = new Dictionary<Vector2Int, Block>();
-    Queue<Block> queue = new Queue<Block>();
     Block _searchCenter;
+
+    Dictionary<Vector2Int,Block> _grid = new Dictionary<Vector2Int, Block>();
+    Queue<Block> _queue = new Queue<Block>();
+    List<Block> _path = new List<Block>(); 
+
     bool _isRunning = true;
 
     Vector2Int[] _directions = {
@@ -21,8 +24,7 @@ public class PathFinder : MonoBehaviour
     void Start()
     {
         LoadBlocks();
-        SetColorStartAndEnd();
-        FindPath();
+        //SetColorStartAndEnd();
     }
     
     void SetColorStartAndEnd()
@@ -42,23 +44,42 @@ public class PathFinder : MonoBehaviour
                 _grid.Add(block.GetGridPose(),block);  
             }
             else{
-                print("Removed overlaping block => "+block.name);
+                Debug.LogWarning("Removed overlaping block => "+block.name);
                 Destroy(block.gameObject);
             }
         }
     }
 
-    void FindPath()
+    void Searching()
     {
-        queue.Enqueue(_startPoint);
-        while(queue.Count > 0 && _isRunning)
+        _queue.Enqueue(_startPoint);
+        while(_queue.Count > 0 && _isRunning)
         {
-            _searchCenter = queue.Dequeue();
-            print("Searching from => "+_searchCenter.name);
+            _searchCenter = _queue.Dequeue();
             _searchCenter._isExplored = true;
             HaltIfEndPointFound(_searchCenter);
             ExploreNeighbors();
         }
+    }
+
+    void CreatePath()
+    {
+        Block Previous = _endPoint;
+        while(Previous != _startPoint)
+        {
+            _path.Add(Previous);
+            Previous = Previous._exploredFrom;
+        }
+        _path.Add(_startPoint);
+        _path.Reverse();
+        
+    }
+
+    public List<Block> GetPath()
+    {
+        Searching();
+        CreatePath();
+        return _path;
     }
 
     void ExploreNeighbors()
@@ -67,13 +88,9 @@ public class PathFinder : MonoBehaviour
         foreach (Vector2Int direction in _directions)
         {
             Vector2Int Pos = _searchCenter.GetComponent<Block>().GetGridPose() + direction;
-            try
+            if(_grid.ContainsKey(Pos))
             {
                 QueueBlock(Pos);
-            }    
-            catch
-            {
-                
             }
         }
     }
@@ -81,12 +98,10 @@ public class PathFinder : MonoBehaviour
     void QueueBlock(Vector2Int Pos)
     {
         Block Neighbour = _grid[Pos];
-        if(!Neighbour._isExplored && !queue.Contains(Neighbour))
+        if(!Neighbour._isExplored && !_queue.Contains(Neighbour))
         {
-            Neighbour.SetColor(Color.blue);
-            queue.Enqueue(Neighbour);
+            _queue.Enqueue(Neighbour);
             Neighbour._exploredFrom = _searchCenter;
-            print("Queueing " + Neighbour.name);
         }    
     }
 

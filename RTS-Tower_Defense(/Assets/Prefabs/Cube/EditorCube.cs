@@ -20,7 +20,10 @@ public class EditorCube : MonoBehaviour
         if(_snap)
         {
             SnapToGrid();
-            LabelText();
+            if(_txtMesh != null)
+            {
+                LabelText();
+            }
         }
     }
 
